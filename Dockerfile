@@ -1,7 +1,8 @@
-FROM alpine:3.19
+FROM alpine:latest
 
 # Install the packages we need. Avahi will be included
 RUN echo -e "https://dl-cdn.alpinelinux.org/alpine/edge/testing\nhttps://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories &&\
+    echo -e "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
 	apk add --update cups \
 	cups-libs \
 	cups-pdf \
@@ -23,7 +24,14 @@ RUN echo -e "https://dl-cdn.alpinelinux.org/alpine/edge/testing\nhttps://dl-cdn.
 	wget \
 	rsync \
  	py3-pycups \
+    bash \
 	&& rm -rf /var/cache/apk/*
+
+ # download and install Panasonic drivers
+ RUN wget http://cs.psn-web.net/support/fax/common/file/Linux_PrnDriver/Driver_Install_files/mccgdi-2.0.8-x86_64.tar.gz &&\
+        tar xzf mccgdi-2.0.8-x86_64.tar.gz &&\
+        head -n3 mccgdi-2.0.8-x86_64/install-driver &&\
+        bash mccgdi-2.0.8-x86_64/install-driver
 
 # This will use port 631
 EXPOSE 631
